@@ -2,7 +2,6 @@ package com.microservices.currencyexchangeservice.controller;
 
 import com.microservices.currencyexchangeservice.model.CurrencyExchange;
 import com.microservices.currencyexchangeservice.repository.CurrencyExchangeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,11 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CurrencyExchangeController {
 
-    @Autowired
-    private CurrencyExchangeRepository repository;
+    private final CurrencyExchangeRepository repository;
+    private final Environment environment;
 
-    @Autowired
-    private Environment environment;
+    public CurrencyExchangeController(CurrencyExchangeRepository repository, Environment environment) {
+        this.repository = repository;
+        this.environment = environment;
+    }
 
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     public CurrencyExchange retrieveExchangeValue(
