@@ -1,18 +1,17 @@
+# Use a lightweight base image with Java 17
 FROM openjdk:17-slim
 
-ENV USER_ID 1000
-RUN mkdir /logs
+# Set the working directory
+WORKDIR /app
 
-RUN adduser -D -H -s /bin/sh -u ${USER_ID} -g ${USER_ID} tomcat
+# Copy the entrypoint script and application JAR
+COPY docker-entrypoint.sh target/currency-exchange-service-0.0.1-SNAPSHOT.jar ./
 
-COPY docker-entrypoint.sh .
+# Make the entrypoint script executable
 RUN chmod +x docker-entrypoint.sh
 
-COPY /target/currency-exchange-service-0.0.1-SNAPSHOT.jar .
-RUN chown -R ${USER_ID} /logs
+# Expose the application port
+EXPOSE 8000
 
-USER ${USER_ID}
-
-EXPOSE 8080
-
-ENTRYPOINT ["./docker-entrypoint.sh"]
+# Specify the entrypoint command
+CMD ["./docker-entrypoint.sh"]
