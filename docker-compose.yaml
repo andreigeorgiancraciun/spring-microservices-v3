@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  currency-exchange:
+    build:
+      context: ./currency-exchange-service
+      dockerfile: ./DockerServiceDescription/Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://naming-server:8761/eureka/
+
+  currency-conversion:
+    build:
+      context: ./currency-conversion-service
+      dockerfile: ./DockerServiceDescription/Dockerfile
+    ports:
+      - "8100:8100"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://naming-server:8761/eureka/
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: ./DockerServiceDescription/Dockerfile
+    ports:
+      - "8765:8765"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://naming-server:8761/eureka/
+
+  naming-server:
+    build:
+      context: ./naming-server
+      dockerfile: ./DockerServiceDescription/Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - currency-network
+
+  #docker run -p 9411:9411 openzipkin/zipkin:2.23
+
+
+
+networks:
+  currency-network:
